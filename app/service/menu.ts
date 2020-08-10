@@ -16,9 +16,17 @@ export default class MenuService extends BaseService {
     data = this.arrayToTree(data) || [];
     const totalCount = await this.app.model.Menu.countDocuments(query);
     return {
-      totalCount,
-      pages: Math.ceil(totalCount / per),
+      code: 200,
       data,
+      message: '操作成功',
+      meta: {
+        pagination: {
+          limit: per,
+          page,
+          pages: Math.ceil(totalCount / per),
+          total: totalCount,
+        },
+      },
     };
   }
 

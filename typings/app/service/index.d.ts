@@ -10,7 +10,9 @@ import ExportAdmin from '../../../app/service/Admin';
 import ExportTest from '../../../app/service/Test';
 import ExportVerify from '../../../app/service/Verify';
 import ExportBase from '../../../app/service/base';
+import ExportFile from '../../../app/service/file';
 import ExportMenu from '../../../app/service/menu';
+import ExportUser from '../../../app/service/user';
 import ExportVideo from '../../../app/service/video';
 
 declare module 'egg' {
@@ -19,7 +21,9 @@ declare module 'egg' {
     test: AutoInstanceType<typeof ExportTest>;
     verify: AutoInstanceType<typeof ExportVerify>;
     base: AutoInstanceType<typeof ExportBase>;
+    file: AutoInstanceType<typeof ExportFile>;
     menu: AutoInstanceType<typeof ExportMenu>;
+    user: AutoInstanceType<typeof ExportUser>;
     video: AutoInstanceType<typeof ExportVideo>;
   }
 }

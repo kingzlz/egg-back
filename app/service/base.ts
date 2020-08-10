@@ -20,6 +20,8 @@ export default class BaseService extends Service {
    * @param per     每页显示的数量
    */
   async list(query = {}, page = 1, per = 10) {
+    console.log('===query===', query);
+
     const data = await this.app.model[this.model]
       .find(query)
       .limit(per)
@@ -29,9 +31,17 @@ export default class BaseService extends Service {
       });
     const totalCount = await this.app.model[this.model].countDocuments(query);
     return {
-      totalCount,
-      pages: Math.ceil(totalCount / per),
+      code: 200,
       data,
+      message: '操作成功',
+      meta: {
+        pagination: {
+          limit: per,
+          page,
+          pages: Math.ceil(totalCount / per),
+          total: totalCount,
+        },
+      },
     };
   }
 

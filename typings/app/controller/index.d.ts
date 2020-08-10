@@ -6,7 +6,9 @@ import ExportHome from '../../../app/controller/home';
 import ExportApiBase from '../../../app/controller/api/base';
 import ExportApiVerify from '../../../app/controller/api/verify';
 import ExportApiAdminAdmin from '../../../app/controller/api/admin/admin';
+import ExportApiFileFile from '../../../app/controller/api/file/file';
 import ExportApiMenuMenu from '../../../app/controller/api/menu/menu';
+import ExportApiUserUser from '../../../app/controller/api/user/user';
 import ExportApiVideoVideo from '../../../app/controller/api/video/video';
 
 declare module 'egg' {
@@ -18,8 +20,14 @@ declare module 'egg' {
       admin: {
         admin: ExportApiAdminAdmin;
       }
+      file: {
+        file: ExportApiFileFile;
+      }
       menu: {
         menu: ExportApiMenuMenu;
+      }
+      user: {
+        user: ExportApiUserUser;
       }
       video: {
         video: ExportApiVideoVideo;
