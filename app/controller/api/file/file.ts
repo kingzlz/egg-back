@@ -21,6 +21,23 @@ export default class File extends BaseController {
   // }
 
   /**
+   * 删除  todo: 将文件删除
+   *  /:id
+   * delete
+   */
+  async destroy() {
+    const { ctx } = this;
+    const result = await ctx.service.file.deleteOne(ctx.params.id);
+    // 将文件删除
+    fs.unlinkSync('app/' + result.fileUrl);
+    ctx.body = {
+      code: 1,
+      msg: '删除成功',
+      data: result,
+    };
+  }
+
+  /**
    * 新增
    * post
    */
