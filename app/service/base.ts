@@ -20,8 +20,6 @@ export default class BaseService extends Service {
    * @param per     每页显示的数量
    */
   async list(query = {}, page = 1, per = 10) {
-    console.log('===query===', query);
-
     const data = await this.app.model[this.model]
       .find(query)
       .limit(per)

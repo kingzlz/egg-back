@@ -6,6 +6,7 @@ export default (app: Application) => {
   router.get('/', controller.home.index);
   router.get('/verify', controller.api.verify.verify); // 验证码
   router.post('/login', controller.api.admin.admin.login); // 登录
+  router.post('/logout', controller.api.admin.admin.logout); // 退出
   router.post('/register', controller.api.admin.admin.register); // 注册
   router.get('/init', controller.api.admin.admin.inInitUser); // 得到用户信息
   router.resources('video', '/video/list', controller.api.video.video);

@@ -12,7 +12,7 @@ export default class AdminController extends Controller {
         if (checkVerify === verify && verify.toLocaleLowerCase()) {
           const token = app.jwt.sign(
             {
-              name, // 需要存储的 token 数据
+              _id: result.data[0]._id, // 需要存储的 token 数据
             },
             app.config.jwt.secret,
             { expiresIn: '1h' }, // token签名 有效期为1小时
@@ -62,17 +62,25 @@ export default class AdminController extends Controller {
     const { ctx, app } = this;
     const { token } = ctx.header; // 获取jwt
     try {
-      const user = await app.jwt.verify(token, app.config.jwt.secret); //  解密，获取payload
-      const users = await ctx.service.admin.find({ name: user.name });
+      const userId = await app.jwt.verify(token, app.config.jwt.secret); //  解密，获取payload
+      const users = await ctx.service.admin.findOne(userId);
       const menu = await ctx.service.menu.list();
-      if (users.data.length) {
+      if (users) {
         ctx.body = {
-          user: users.data[0],
+          user: users,
           menu: menu.data.sort((a, b) => a.sort - b.sort),
         };
       }
     } catch (error) {
       ctx.throw('401', new Error(error));
     }
+  }
+
+  public async logout() {
+    const { ctx } = this;
+    ctx.authUser = null;
+    ctx.body = {
+      message: '退出成功',
+    };
   }
 }

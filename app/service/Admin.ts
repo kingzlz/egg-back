@@ -12,6 +12,10 @@ export default class AdminService extends Service {
     };
   }
 
+  public async findOne(id: string) {
+    const data = await this.app.model.User.findById(id);
+    return data;
+  }
 
   public async register(params: RegisterUser) {
     const result = new this.app.model.User(params);
