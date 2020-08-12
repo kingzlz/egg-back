@@ -14,11 +14,13 @@ export default class File extends BaseController {
     super('file', app);
   }
 
-  // async index() {
-  //   const { ctx } = this;
-  //   const result = await ctx.service.file.list();
-  //   ctx.body = result;
-  // }
+  async index() {
+    const { ctx } = this;
+    const uid = ctx.authUser._id;
+    const result = await ctx.service.file.list({ uid });
+    result.data = this.url2Base64(result.data);
+    ctx.body = result;
+  }
 
   /**
    * 删除  todo: 将文件删除
@@ -97,5 +99,12 @@ export default class File extends BaseController {
       fs.mkdirSync(dirname);
       return true;
     }
+  }
+
+  url2Base64(data: any[]): any[] {
+    data.forEach((item: any) => {
+      item.fileUrl = 'data:image/png;base64,' + fs.readFileSync(`app/${item.fileUrl}`).toString('base64');
+    });
+    return data;
   }
 }
