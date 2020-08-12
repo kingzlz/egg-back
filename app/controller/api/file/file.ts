@@ -40,7 +40,7 @@ export default class File extends BaseController {
   }
 
   /**
-   * 新增
+   * 新增，用于文件新增时
    * post
    */
   async create() {
@@ -48,6 +48,26 @@ export default class File extends BaseController {
     const uid = ctx.authUser._id;
     const result = await ctx.service.file.save(
       Object.assign(ctx.request.body, { uid }),
+    );
+    ctx.body = {
+      code: 1,
+      msg: '新增成功',
+      data: result,
+    };
+  }
+
+  // 将拍照的base64转成图片存起来
+  async base64ToImage() {
+    const { ctx } = this;
+    const uid = ctx.authUser._id;
+    const bodyData: { image64: string, fileName: string } = ctx.request.body;
+    const file = this.base642Image(bodyData);
+    const param = {
+      fileName: bodyData.fileName,
+      fileUrl: file.url,
+    };
+    const result = await ctx.service.file.save(
+      Object.assign(param, { uid }),
     );
     ctx.body = {
       code: 1,
@@ -106,5 +126,25 @@ export default class File extends BaseController {
       item.fileUrl = 'data:image/png;base64,' + fs.readFileSync(`app/${item.fileUrl}`).toString('base64');
     });
     return data;
+  }
+
+  base642Image(imgData: { image64: string, fileName: string }): any {
+    const base64Data = imgData.image64.replace(/^data:image\/\w+;base64,/, '');
+    const dataBuffer = new Buffer(base64Data, 'base64');
+    // 基础的目录
+    const uplandBasePath = 'app/public/uploads';
+    // 生成文件名
+
+    const filename = imgData.fileName;
+    // 生成文件夹
+    const dirname = dayjs(Date.now()).format('YYYY/MM/DD');
+
+    this.mkdirSync(path.join(uplandBasePath, dirname));
+    fs.writeFile(path.join('/public/uploads', dirname, filename), dataBuffer, (err: any) => {
+      if (err) return;
+      console.log('图片保存成功');
+      return { url: path.join('/public/uploads', dirname, filename) };
+    });
+
   }
 }

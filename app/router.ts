@@ -14,4 +14,5 @@ export default (app: Application) => {
   router.resources('menu', '/menu/list', controller.api.menu.menu);
   router.resources('file', '/file/list', controller.api.file.file);
   router.post('/file/upload', controller.api.file.file.uploadFile); // 上传文件
+  router.post('/file/upload/base64', controller.api.file.file.base64ToImage); // 上传文件base64 to image
 };
