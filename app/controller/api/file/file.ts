@@ -26,6 +26,25 @@ export default class File extends BaseController {
     ctx.body = result;
   }
 
+  // 批量导入
+  async batchImport() {
+    const { ctx } = this;
+    const uid = ctx.authUser._id;
+    const data = ctx.request.body;
+
+    for (const item of data) {
+      Object.assign(item, {
+        uid,
+      });
+    }
+    const result = await ctx.service.file.saveMany(data);
+    ctx.body = {
+      code: 1,
+      msg: '新增成功',
+      data: result,
+    };
+  }
+
   /**
    * 删除  todo: 将文件删除
    *  /:id
@@ -124,7 +143,7 @@ export default class File extends BaseController {
     };
   }
 
-  mkdirSync(dirname) {
+  private mkdirSync(dirname) {
     if (fs.existsSync(dirname)) {
       return true;
     }
@@ -134,11 +153,16 @@ export default class File extends BaseController {
     }
   }
 
-  url2Base64(data: any[]): any[] {
+  private url2Base64(data: any[]): any[] {
     data.forEach((item: any) => {
-      item.fileUrl =
-        'data:image/png;base64,' +
-        fs.readFileSync(`${item.fileUrl}`).toString('base64');
+      try {
+        item.fileUrl =
+          'data:image/png;base64,' +
+          fs.readFileSync(`${item.fileUrl}`).toString('base64');
+      } catch (error) {
+        console.error(`转化路径报错:${error}`);
+        item.fileUrl = '';
+      }
     });
     return data;
   }
