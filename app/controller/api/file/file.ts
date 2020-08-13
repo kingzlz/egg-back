@@ -10,6 +10,10 @@ import sendToWormhole = require('stream-wormhole');
 import dayjs = require('dayjs');
 
 export default class File extends BaseController {
+  // 基础的目录
+  uploadBasePath = 'app/public/uploads';
+  // 生成文件夹
+  dirname = dayjs(Date.now()).format('YYYY/MM/DD');
   constructor(app: Context) {
     super('file', app);
   }
@@ -31,7 +35,7 @@ export default class File extends BaseController {
     const { ctx } = this;
     const result = await ctx.service.file.deleteOne(ctx.params.id);
     // 将文件删除
-    fs.unlinkSync('app/' + result.fileUrl);
+    fs.unlinkSync(result.fileUrl);
     ctx.body = {
       code: 1,
       msg: '删除成功',
@@ -59,39 +63,48 @@ export default class File extends BaseController {
   // 将拍照的base64转成图片存起来
   async base64ToImage() {
     const { ctx } = this;
-    const uid = ctx.authUser._id;
-    const bodyData: { image64: string, fileName: string } = ctx.request.body;
-    const file = this.base642Image(bodyData);
-    const param = {
-      fileName: bodyData.fileName,
-      fileUrl: file.url,
-    };
-    const result = await ctx.service.file.save(
-      Object.assign(param, { uid }),
-    );
+
+    const { image64, fileName } = ctx.request.body;
+    const base64Data = image64.replace(/^data:image\/\w+;base64,/, '');
+    const dataBuffer = Buffer.from(base64Data, 'base64');
+
+    // 生成文件名
+    const filename = fileName;
+
+    this.mkdirSync(path.join(this.uploadBasePath, this.dirname));
+
+    // 生成写入路径
+    const target = path.join(this.uploadBasePath, this.dirname, filename);
+    try {
+      fs.writeFile(target, dataBuffer, (err: any) => {
+        if (err) {
+          console.log('保存图片error', err);
+          return;
+        }
+      });
+    } catch (err) {
+      return {
+        err,
+      };
+    }
     ctx.body = {
-      code: 1,
-      msg: '新增成功',
-      data: result,
+      fileUrl: target,
+      fileName,
     };
   }
 
   public async uploadFile() {
     const { ctx } = this;
     const stream = await ctx.getFileStream();
-    // 基础的目录
-    const uplaodBasePath = 'app/public/uploads';
     // 生成文件名
     // const filename = `${Date.now()}${Number.parseInt(
     //   String(Math.random() * 1000),
     // )}${path.extname(stream.filename).toLocaleLowerCase()}`;
     const filename = stream.filename;
-    // 生成文件夹
-    const dirname = dayjs(Date.now()).format('YYYY/MM/DD');
 
-    this.mkdirSync(path.join(uplaodBasePath, dirname));
+    this.mkdirSync(path.join(this.uploadBasePath, this.dirname));
     // 生成写入路径
-    const target = path.join(uplaodBasePath, dirname, filename);
+    const target = path.join(this.uploadBasePath, this.dirname, filename);
     // 写入流
     const writeStream = fs.createWriteStream(target);
     try {
@@ -105,7 +118,7 @@ export default class File extends BaseController {
       };
     }
     ctx.body = {
-      url: path.join('/public/uploads', dirname, filename),
+      url: target,
       fields: stream.fields,
       filename,
     };
@@ -123,28 +136,10 @@ export default class File extends BaseController {
 
   url2Base64(data: any[]): any[] {
     data.forEach((item: any) => {
-      item.fileUrl = 'data:image/png;base64,' + fs.readFileSync(`app/${item.fileUrl}`).toString('base64');
+      item.fileUrl =
+        'data:image/png;base64,' +
+        fs.readFileSync(`${item.fileUrl}`).toString('base64');
     });
     return data;
-  }
-
-  base642Image(imgData: { image64: string, fileName: string }): any {
-    const base64Data = imgData.image64.replace(/^data:image\/\w+;base64,/, '');
-    const dataBuffer = new Buffer(base64Data, 'base64');
-    // 基础的目录
-    const uplandBasePath = 'app/public/uploads';
-    // 生成文件名
-
-    const filename = imgData.fileName;
-    // 生成文件夹
-    const dirname = dayjs(Date.now()).format('YYYY/MM/DD');
-
-    this.mkdirSync(path.join(uplandBasePath, dirname));
-    fs.writeFile(path.join('/public/uploads', dirname, filename), dataBuffer, (err: any) => {
-      if (err) return;
-      console.log('图片保存成功');
-      return { url: path.join('/public/uploads', dirname, filename) };
-    });
-
   }
 }
