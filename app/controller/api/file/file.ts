@@ -54,7 +54,12 @@ export default class File extends BaseController {
     const { ctx } = this;
     const result = await ctx.service.file.deleteOne(ctx.params.id);
     // 将文件删除
-    fs.unlinkSync(result.fileUrl);
+    try {
+      fs.unlinkSync(result.fileUrl);
+    } catch (error) {
+      console.error('删除文件Error', error);
+    }
+
     ctx.body = {
       code: 1,
       msg: '删除成功',
