@@ -45,3 +45,4 @@ $ npm start
 开始是frilename为 path.join(存储路径), 最后`const target = path.join(this.uploadBasePath, this.dirname, filename);` 将target传给`filename`
 - 根据`token`获得用户信息,不更新的问题, 问题描述:上传的文件都关联到当前用户`_id`,结果多个用户上传的内容,后台取关联用户`_id`一样. 原因是再生成`token`时,用`username`与加密字符串组合生成的token. 最后用当前用户的`_id`唯一值与加密字符串生成`token`
 - 没有文件服务器,将上传或保存的图片放到本地,取数据的时候,通过node.js将相关文件转成base64格式传给前端展示
+- 更新信息时,findByIdAndUpdate(id, update, options?, cb?) 如果不传cb,则返回的数据是更新之前的

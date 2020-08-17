@@ -66,6 +66,7 @@ export default class AdminController extends Controller {
       const users = await ctx.service.admin.findOne(userId);
       const menu = await ctx.service.menu.list();
       if (users) {
+        users.avatar = ctx.helper.singleUrl2Base64(users.avatar);
         ctx.body = {
           user: users,
           menu: menu.data.sort((a, b) => a.sort - b.sort),

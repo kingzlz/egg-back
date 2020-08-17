@@ -63,6 +63,8 @@ export default class BaseService extends Service {
       {
         upsert: true,
       },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      () => {},
     );
     return result;
   }

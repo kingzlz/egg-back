@@ -22,7 +22,7 @@ export default class File extends BaseController {
     const { ctx } = this;
     const uid = ctx.authUser._id;
     const result = await ctx.service.file.list({ uid });
-    result.data = this.url2Base64(result.data);
+    result.data = ctx.helper.url2Base64(result.data, 'fileUrl');
     ctx.body = result;
   }
 
@@ -158,17 +158,17 @@ export default class File extends BaseController {
     }
   }
 
-  private url2Base64(data: any[]): any[] {
-    data.forEach((item: any) => {
-      try {
-        item.fileUrl =
-          'data:image/png;base64,' +
-          fs.readFileSync(`${item.fileUrl}`).toString('base64');
-      } catch (error) {
-        console.error(`转化路径报错:${error}`);
-        item.fileUrl = '';
-      }
-    });
-    return data;
-  }
+  // private url2Base64(data: any[]): any[] {
+  //   data.forEach((item: any) => {
+  //     try {
+  //       item.fileUrl =
+  //         'data:image/png;base64,' +
+  //         fs.readFileSync(`${item.fileUrl}`).toString('base64');
+  //     } catch (error) {
+  //       console.error(`转化路径报错:${error}`);
+  //       item.fileUrl = '';
+  //     }
+  //   });
+  //   return data;
+  // }
 }
