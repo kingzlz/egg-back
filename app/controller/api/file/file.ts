@@ -12,6 +12,8 @@ import dayjs = require('dayjs');
 export default class File extends BaseController {
   // 基础的目录
   uploadBasePath = 'app/public/uploads';
+  // 基础的目录
+  saveBasePath = '/public/uploads';
   // 生成文件夹
   dirname = dayjs(Date.now()).format('YYYY/MM/DD');
   constructor(app: Context) {
@@ -22,7 +24,7 @@ export default class File extends BaseController {
     const { ctx } = this;
     const uid = ctx.authUser._id;
     const result = await ctx.service.file.list({ uid });
-    result.data = ctx.helper.url2Base64(result.data, 'fileUrl');
+    // result.data = ctx.helper.url2Base64(result.data, 'fileUrl');
     ctx.body = result;
   }
 
@@ -55,7 +57,7 @@ export default class File extends BaseController {
     const result = await ctx.service.file.deleteOne(ctx.params.id);
     // 将文件删除
     try {
-      fs.unlinkSync(result.fileUrl);
+      fs.unlinkSync(`app/${result.fileUrl}`);
     } catch (error) {
       console.error('删除文件Error', error);
     }
@@ -111,8 +113,10 @@ export default class File extends BaseController {
         err,
       };
     }
+    // 最后保存路径
+    const saveUri = path.join(this.saveBasePath, this.dirname, filename);
     ctx.body = {
-      fileUrl: target,
+      fileUrl: saveUri,
       fileName,
     };
   }
@@ -141,8 +145,10 @@ export default class File extends BaseController {
         error: '错误',
       };
     }
+    // 最后保存路径
+    const saveUri = path.join(this.saveBasePath, this.dirname, filename);
     ctx.body = {
-      url: target,
+      url: saveUri,
       fields: stream.fields,
       filename,
     };
@@ -158,17 +164,4 @@ export default class File extends BaseController {
     }
   }
 
-  // private url2Base64(data: any[]): any[] {
-  //   data.forEach((item: any) => {
-  //     try {
-  //       item.fileUrl =
-  //         'data:image/png;base64,' +
-  //         fs.readFileSync(`${item.fileUrl}`).toString('base64');
-  //     } catch (error) {
-  //       console.error(`转化路径报错:${error}`);
-  //       item.fileUrl = '';
-  //     }
-  //   });
-  //   return data;
-  // }
 }
