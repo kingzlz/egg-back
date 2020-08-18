@@ -8,7 +8,7 @@ export default class User extends BaseController {
   async index() {
     const { ctx } = this;
     const result = await ctx.service.user.list();
-    result.data = ctx.helper.url2Base64(result.data, 'avatar');
+    // result.data = ctx.helper.url2Base64(result.data, 'avatar');
     ctx.body = result;
   }
 }

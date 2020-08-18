@@ -128,8 +128,16 @@ export default class File extends BaseController {
     // const filename = `${Date.now()}${Number.parseInt(
     //   String(Math.random() * 1000),
     // )}${path.extname(stream.filename).toLocaleLowerCase()}`;
-    const filename = stream.filename;
-
+    let filename = '';
+    // todo: 判断是否有重名的文件,如果有则名字后面加(N)
+    const findFilePathUri = path.join(this.uploadBasePath, this.dirname);
+    const files = await ctx.helper.findDirFiles(findFilePathUri);
+    if (files.length && files.includes(stream.filename)) {
+      const filenameArr = stream.filename.split('.');
+      filename = `${filenameArr[0]}-${ctx.helper.uuid(4)}.${filenameArr[1]}`;
+    } else {
+      filename = stream.filename;
+    }
     this.mkdirSync(path.join(this.uploadBasePath, this.dirname));
     // 生成写入路径
     const target = path.join(this.uploadBasePath, this.dirname, filename);
@@ -163,5 +171,4 @@ export default class File extends BaseController {
       return true;
     }
   }
-
 }
