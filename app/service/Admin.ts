@@ -2,6 +2,10 @@ import { Service } from 'egg';
 export interface RegisterUser {
   name: string;
   password: string;
+  nickName?: string;
+  email?: string;
+  phone?: string;
+  avatar?: string;
 }
 export default class AdminService extends Service {
   public async find(query = {}) {

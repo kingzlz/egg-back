@@ -128,6 +128,8 @@ export default class File extends BaseController {
     // const filename = `${Date.now()}${Number.parseInt(
     //   String(Math.random() * 1000),
     // )}${path.extname(stream.filename).toLocaleLowerCase()}`;
+    // 先创建文件夹
+    this.mkdirSync(path.join(this.uploadBasePath, this.dirname));
     let filename = '';
     // todo: 判断是否有重名的文件,如果有则名字后面加(N)
     const findFilePathUri = path.join(this.uploadBasePath, this.dirname);
@@ -138,7 +140,7 @@ export default class File extends BaseController {
     } else {
       filename = stream.filename;
     }
-    this.mkdirSync(path.join(this.uploadBasePath, this.dirname));
+
     // 生成写入路径
     const target = path.join(this.uploadBasePath, this.dirname, filename);
     // 写入流

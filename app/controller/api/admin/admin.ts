@@ -49,7 +49,7 @@ export default class AdminController extends Controller {
         return (ctx.body = {
           code: 200,
           data: result,
-          mesage: '注册成功,请登录',
+          message: '注册成功,请登录',
         });
       }
 
