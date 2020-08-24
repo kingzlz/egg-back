@@ -164,7 +164,7 @@ export default class File extends BaseController {
     };
   }
 
-  private mkdirSync(dirname) {
+  private mkdirSync(dirname: string) {
     if (fs.existsSync(dirname)) {
       return true;
     }

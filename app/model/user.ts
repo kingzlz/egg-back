@@ -26,6 +26,9 @@ export default (app: Application) => {
       avatar: {
         type: String,
       },
+      area: {
+        type: String,
+      },
     },
     {
       timestamps: true,

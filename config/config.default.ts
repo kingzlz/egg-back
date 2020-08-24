@@ -23,6 +23,7 @@ export default (appInfo: EggAppInfo) => {
       options: {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        useFindAndModify: false,
       },
     },
   };
