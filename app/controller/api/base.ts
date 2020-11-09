@@ -1,4 +1,4 @@
-import { Controller, Context } from 'egg';
+import { Context, Controller } from 'egg';
 
 export default class BaseController extends Controller {
   private serviceName: string;
@@ -13,8 +13,7 @@ export default class BaseController extends Controller {
   async index() {
     const { ctx } = this;
     const uid = ctx.authUser._id;
-    const result = await ctx.service[this.serviceName].list({ uid });
-    ctx.body = result;
+    ctx.body = await ctx.service[this.serviceName].list({ uid });
   }
 
   /**

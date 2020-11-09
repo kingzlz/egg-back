@@ -15,7 +15,7 @@ export default {
     return users.data[0];
   },
   async test() {
-    // 调用awit cxt.helper.test()
+    // 调用await cxt.helper.test()
     return 't3dt';
   },
   url2Base64(data: any[], field: string): any[] {

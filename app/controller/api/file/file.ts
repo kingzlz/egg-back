@@ -1,6 +1,5 @@
 import { Context } from 'egg';
 import BaseController from '../base';
-
 import fs = require('fs');
 import path = require('path');
 // 故名思意 异步二进制 写入流
@@ -23,9 +22,8 @@ export default class File extends BaseController {
   async index() {
     const { ctx } = this;
     const uid = ctx.authUser._id;
-    const result = await ctx.service.file.list({ uid });
     // result.data = ctx.helper.url2Base64(result.data, 'fileUrl');
-    ctx.body = result;
+    ctx.body = await ctx.service.file.list({ uid });
   }
 
   // 批量导入
@@ -48,7 +46,7 @@ export default class File extends BaseController {
   }
 
   /**
-   * 删除  todo: 将文件删除
+   * 删除  将文件删除
    *  /:id
    * delete
    */
